@@ -1,7 +1,7 @@
 import nextConnect from 'next-connect';
 const models = require('../../../../db/models/index');
 import middleware from '../../../../middleware/auth';
-import { addDays , getIPAddress } from '../../../../middleware/utils';
+import { addDays, getIPAddress } from '../../../../middleware/utils';
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
 import moment from 'moment';
@@ -40,7 +40,7 @@ const handler = nextConnect()
         dataUser: dataUser,
       });
     }
-    
+
     var ip = await getIPAddress()
     var currentDate = moment().format()
     dataUser.ip = ip

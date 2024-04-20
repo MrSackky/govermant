@@ -64,7 +64,7 @@ const handler = nextConnect()
     const {
       organization_id,
       menu_title,
-      menu_detail ="",
+      menu_detail = "",
       menu_seq,
       have_sub,
       is_show,

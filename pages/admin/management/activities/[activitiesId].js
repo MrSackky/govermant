@@ -155,12 +155,7 @@ export default function Home(props) {
     setActivitiesData(_activitiesData.data.activities)
     setActive(_activitiesData.data.activities.status_active);
     setSlide(_activitiesData.data.activities.is_slide)
-    setPreviewImage(
-      '..\\..\\..\\uploads\\c-' +
-      user.organization_id +
-      '\\activities\\' +
-      _activitiesData.data.activities.activities_image,
-    );
+    setPreviewImage('..\\..\\..\\uploads\\c-' + user.organization_id + '\\activities\\' + _activitiesData.data.activities.activities_image);
     setPreviewVisible(true);
     setImageLandingPage(_activitiesData.data.activities.activities_image);
     // console.log(_activitiesData.data.activities.activities_date);

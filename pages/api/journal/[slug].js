@@ -1,10 +1,10 @@
+import moment from 'moment';
 import nextConnect from 'next-connect';
-const models = require('../../../db/models/index');
 import middleware from '../../../middleware/auth';
-import { addDays , getIPAddress } from '../../../middleware/utils';
+import { getIPAddress } from '../../../middleware/utils';
+const models = require('../../../db/models/index');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-import moment from 'moment';
 
 const handler = nextConnect()
   // Middleware
@@ -19,12 +19,12 @@ const handler = nextConnect()
 
     const journal = await models.journals.findOne({
       where: {
-        journal_id : journal_id,
+        journal_id: journal_id,
       },
-     
+
     });
-    
-    
+
+
     return res.status(200).json({
       status: 200,
       message: "success",
@@ -36,6 +36,7 @@ const handler = nextConnect()
     const { slug } = req.query;
     const journal_id = slug;
     const {
+      organization_id,
       journal_subject,
       journal_detail,
       journal_file,
@@ -46,6 +47,7 @@ const handler = nextConnect()
 
     //SampleText.replace("Developer", "App Builder");
     const dataJournal = {
+      organization_id: organization_id,
       journal_subject: journal_subject,
       journal_detail: journal_detail,
       journal_file: journal_file,
@@ -55,12 +57,13 @@ const handler = nextConnect()
     };
 
     if (
+      organization_id == undefined ||
       journal_subject == undefined ||
       journal_detail == undefined ||
       journal_file == undefined ||
       journal_ori == undefined ||
       is_show == undefined ||
-      journal_img  == undefined
+      journal_img == undefined
     ) {
       return res.status(200).json({
         status: 201,
@@ -69,7 +72,7 @@ const handler = nextConnect()
         data: dataJournal,
       });
     }
-    
+
     var ip = await getIPAddress()
     var currentDate = moment().format()
     dataJournal.ip = ip

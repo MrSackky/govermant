@@ -18,7 +18,7 @@ const { TextArea } = Input;
 const config = require('../../../pages/admin/config');
 const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 const { Text, Title } = Typography;
-export default function modal({ fetch, user, pollId, fetchPollQuestionData }) {
+export default function modal({ fetch, user, pollId }) {
   let divRef = useRef(null);
   const [api, contextHolder] = notification.useNotification();
   const [visible, setVisible] = useState(false);
@@ -30,19 +30,17 @@ export default function modal({ fetch, user, pollId, fetchPollQuestionData }) {
   const onSubmitHandler = async value => {
     const data = {
       organization_id: user.organization_id,
-      poll_questions_title: value.poll_questions_title,
-      poll_questions_seq: '999999',
-      poll_id: pollId
+      header_image: imageLandingPage,
+      header_link: value.header_link,
     };
-    console.log(data);
-    const registerData = await apiInstance().post('/pollmenu', data);
+    const registerData = await apiInstance().post('/covermenu', data);
     if (registerData.data.status == 200) {
       openNotificationSuccess();
     } else {
       openNotificationFail(registerData.data.message);
     }
     setVisible(false);
-    fetchPollQuestionData();
+    fetch();
     onReset();
   };
 
@@ -74,7 +72,7 @@ export default function modal({ fetch, user, pollId, fetchPollQuestionData }) {
     multiple: false,
     listType: 'text',
     maxCount: 1,
-    action: "/api/upload/banner",
+    action: "/api/upload/cover",
     preview: false,
     // uid: user.type_user == 1 ? "admin" : user.organization_id,
     // beforeUpload(file) {
@@ -134,8 +132,7 @@ export default function modal({ fetch, user, pollId, fetchPollQuestionData }) {
 
     },
     onRemove(info) {
-      console.log("onRemove")
-      console.log(info)
+
       resetImagePreview()
 
     }
@@ -221,16 +218,16 @@ export default function modal({ fetch, user, pollId, fetchPollQuestionData }) {
             </Dragger>
           </Form.Item>
           <Form.Item
-            name="#"
+            name="header_link"
             label="ลิงค์"
             style={{ float: 'left' }}
             className="block text-gray-700 text-sm font-bold mb-2 w-full"
-            rules={[
-              {
-                required: true,
-                message: 'กรุณากรอกลิงค์ URL',
-              },
-            ]}
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'กรุณากรอกลิงค์ URL',
+          //   },
+          // ]}
           >
             <Input
               id="#"

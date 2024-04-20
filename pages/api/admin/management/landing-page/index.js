@@ -91,8 +91,8 @@ const handler = nextConnect()
               [Op.like]: '%' + search + '%'
             },
             organization_id : organization_id
-  
-  
+
+
           }
         } else {
           console.log("if2")
@@ -105,38 +105,38 @@ const handler = nextConnect()
               [Op.like]: '%' + search + '%'
             },
             organization_id : organization_id
-  
-  
+
+
           }
         }
-  
-  
+
+
       } else {
         if (filters == 'undefined' || filters == 'null') {
           // console.log("if3")
           // console.log(filters)
-  
+
           _search = {
-  
+
             is_deleted: {
               [Op.ne]: 1,
             },
             organization_id : organization_id
-  
+
           }
         } else {
           // console.log("if4")
           // console.log(filters)
           _search = {
-  
+
             is_deleted: {
               [Op.ne]: 1,
             },
             organization_id : organization_id
-  
+
           }
         }
-  
+
       }
     }
 
@@ -144,7 +144,7 @@ const handler = nextConnect()
 
     // console.log(_search)
     const _intro = await models.intro.findAndCountAll({
-      // attributes: ['package_id','code_package','name_package','size_limit'] 
+      // attributes: ['package_id','code_package','name_package','size_limit']
       where: _search,
       offset: results * (page - 1),
       limit: parseInt(results),

@@ -57,7 +57,7 @@ export default function Home(props) {
       'thumbnail_link': value.thumbnail_link ? value.thumbnail_link : "",
       'is_use': isUse
     }
-    // console.log(data)
+    console.log(data)
     const registerData = await apiInstance().put('/organization/' + organizationId, data);
     if (registerData.data.status == 200) {
       openNotificationRegisterSuccess()
@@ -345,7 +345,7 @@ export default function Home(props) {
   }
 
   return (
-    <Layout title="Government - Admin management" titlePage={"แก้ไขข้อมูลหน่วยงาน " + (organizationData ? organizationData.organization_name : "")} url={origin} indexMenu={"2"} origin={origin} props={props} _routes={[
+    <Layout title="Government - Admin management" titlePage={"แก้ไขข้อมูลหน่วยงาน " + (organizationData ? organizationData.organization_name : "")} url={origin} indexMenu={"1"} origin={origin} props={props} _routes={[
       {
         path: '/admin/dashborad',
         breadcrumbName: 'หน้าหลัก',
@@ -477,7 +477,7 @@ export default function Home(props) {
               style={{ textAlign: "left !important" }}
 
             >
-              <Select defaultValue={organizationData ? organizationData.package : "0"}
+              <Select defaultValue={organizationData ? organizationData.packages : "0"}
                 // style={{ width: 120 }}
                 // onChange={handleChange}
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

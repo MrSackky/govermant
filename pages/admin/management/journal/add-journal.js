@@ -39,7 +39,9 @@ export default function Home(props) {
   const [content, setContent] = useState('')
   const [previewImage, setPreviewImage] = useState(null)
   const [imageLandingPage, setImageLandingPage] = useState(null)
-  const [previewVisible, setPreviewVisible] = useState(false)
+  const [previewVisibleImage, setPreviewVisibleImage] = useState(false)
+  const [previewFile, setPreviewFile] = useState(null)
+  const [previewVisibleFile, setPreviewVisibleFile] = useState(false)
 
   useEffect(() => {
     fetch({ pagination });
@@ -137,6 +139,7 @@ export default function Home(props) {
 
   const onReset = () => {
     setActive(1)
+    resetImagePreview()
     form.resetFields();
   };
 
@@ -187,8 +190,8 @@ export default function Home(props) {
           if (!info.file.url && !info.file.preview) {
             info.file.preview = await getBase64(info.file.originFileObj);
           }
-          setPreviewImage(info.file.url || info.file.preview)
-          setPreviewVisible(true)
+          setPreviewFile(info.file.url || info.file.preview)
+          setPreviewVisibleFile(true)
           break;
 
         default:
@@ -259,7 +262,7 @@ export default function Home(props) {
             info.file.preview = await getBase64(info.file.originFileObj);
           }
           setPreviewImage(info.file.url || info.file.preview)
-          setPreviewVisible(true)
+          setPreviewVisibleImage(true)
           break;
 
         default:
@@ -283,7 +286,9 @@ export default function Home(props) {
   }
 
   const resetImagePreview = () => {
-    setPreviewVisible(false)
+    setPreviewVisibleFile(false)
+    setPreviewVisibleImage(false)
+    setPreviewFile(null)
     setPreviewImage(null)
   }
 
@@ -372,7 +377,7 @@ export default function Home(props) {
               {...fileUploadprops}
             >
 
-              {previewVisible && <> <p className="ant-upload-drag-icon">
+              {previewVisibleFile && <> <p className="ant-upload-drag-icon">
                 <FilePdfTwoTone />
               </p>
                 <p className="ant-upload-text">
@@ -381,7 +386,7 @@ export default function Home(props) {
                 </p>
               </>
               }
-              {!previewVisible && <>
+              {!previewVisibleFile && <>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
@@ -432,14 +437,14 @@ export default function Home(props) {
               {...imageUploadprops}
             >
 
-              {previewVisible && <><Image
+              {previewVisibleImage && <><Image
                 // width={200}
                 preview={false}
                 src={previewImage}
               />
               </>
               }
-              {!previewVisible && <>
+              {!previewVisibleImage && <>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>

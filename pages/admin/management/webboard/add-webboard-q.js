@@ -260,7 +260,7 @@ export default function Home(props) {
             <div className="lg:inline-flex w-full">
               <div className="inline-flex text-left lg:w-1/2">
                 <Switch checked={active} onClick={actived} />
-                <p className="mx-2 text-sm">อนุมัติ</p>
+                <p className="mx-2 text-sm">การแสดงผล</p>
               </div>
               <div className="text-center lg:text-right w-full lg:w-1/2">
                 <Button

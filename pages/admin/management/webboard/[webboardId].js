@@ -351,7 +351,7 @@ export default function Home(props) {
                     checked={active}
                     onClick={value => setActive(value ? 1 : 0)}
                   />
-                  <p className="mx-2 text-sm">สถานะการใช้งาน</p>
+                  <p className="mx-2 text-sm">การแสดงผล</p>
                 </div>
                 <div className="text-center lg:text-right w-full lg:w-1/2">
                   <Button

@@ -1,38 +1,24 @@
+import {
+  DashboardOutlined, MailOutlined, ToolOutlined
+} from '@ant-design/icons';
+import { Breadcrumb, Col, Layout, Menu, PageHeader, Row } from 'antd';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Layout, Menu, Button, Row, Col, Breadcrumb, PageHeader, Image } from 'antd';
 /* Components */
-import Router, { useRouter } from 'next/router';
-import HeaderAdmin from '../header/HeaderAdmin';
-import MenuAdmin from '../navigation/MenuAdmin';
-import MenuSuperAdmin from '../navigation/MenuSuperAdmin';
-// import Footer from '../footer/FooterDefault';
-const { Header, Footer, Sider, Content } = Layout;
-import { useEffect, useState } from 'react'
-import { absoluteUrl, checkIsLogin } from '../../middleware/utils';
-import {
-  AppstoreOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  PieChartOutlined,
-  DesktopOutlined,
-  ContainerOutlined,
-  MailOutlined,
-  DashboardOutlined,
-  UnorderedListOutlined,
-  UserOutlined,
-  ToolOutlined
-} from '@ant-design/icons';
-
-const { SubMenu } = Menu;
+import Router from 'next/router';
+import { useEffect, useState } from 'react';
+import { checkIsLogin } from '../../middleware/utils';
 // import TopicMenu from "./components/TopicMenu";
 import TopicMenu from "./../../components/menu/TopicMenu";
-
 // import "./App.css";
 //  import "./App.module.css";
-
 import NavBar from "./../../components/NavBar/NavBar";
 import SideBar from "./../../components/SideBar/SideBar";
+// import Footer from '../footer/FooterDefault';
+const { Header, Footer, Sider, Content } = Layout;
+
+const { SubMenu } = Menu;
+
 
 export default function LayoutAdmin({
   children,
@@ -107,8 +93,7 @@ export default function LayoutAdmin({
   };
 
   const gotoPage = (key) => {
-    console.log("key")
-    console.log(key)
+
     if (user.type_user == 1) {
       switch (key) {
         case "0":

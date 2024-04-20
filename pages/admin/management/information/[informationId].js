@@ -46,11 +46,13 @@ export default function Home(props) {
   async function onSubmitHandler(value) {
     // console.log("value")
     // console.log(value)
+
+    var dateStr = moment(value.infor_date).format();
     const data = {
       infor_title: value.infor_title,
       infor_detail: value.infor_detail,
       infor_image: imageLandingPage,
-      infor_date: date,
+      infor_date: dateStr,
       infor_keyword: value.infor_keyword,
       infor_view: '0',
       status_active: active,
@@ -185,6 +187,7 @@ export default function Home(props) {
       },
     ]);
   };
+  console.log(informationData)
   function disabledDateTime() {
     return {
       disabledHours: () => range(0, 24).splice(4, 20),

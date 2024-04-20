@@ -1,6 +1,8 @@
 import { FilePdfTwoTone, InboxOutlined } from '@ant-design/icons';
 import {
-  Button, Form, Input, notification, Switch, Typography, Upload
+  Button, Form, Input,
+  Switch, Typography, Upload,
+  notification
 } from 'antd';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -239,6 +241,12 @@ export default function Home(props) {
             name="file_name"
             label="แนบไฟล์ :"
             className="block text-gray-700 text-sm font-bold mb-2 w-full"
+            rules={[
+              {
+                required: true,
+                message: 'กรุณากรอกเลือกเอกสาร',
+              },
+            ]}
           // rules={[
           //   {
           //     required: true,
@@ -285,6 +293,12 @@ export default function Home(props) {
             name="file_url"
             label="ที่อยู่ url :"
             className="block text-gray-700 text-sm font-bold mb-2 w-full"
+            rules={[
+              {
+                required: true,
+                message: 'กรุณากรอกที่อยู่ url ของเอกสาร',
+              },
+            ]}
           // rules={[
           //   {
           //     required: true,

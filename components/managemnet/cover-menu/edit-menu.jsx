@@ -1,12 +1,11 @@
+import { InboxOutlined } from '@ant-design/icons';
 import {
-  Button,
-  Form,
-  Input,
+  Button, Form, Image, Input,
   Modal,
   notification,
-  Select,
-  Typography
+  Select, Switch, Typography, Upload
 } from 'antd';
+import axios from 'axios';
 import dynamic from 'next/dynamic';
 import React, { useEffect, useRef, useState } from 'react';
 import { apiInstance } from '../../../middleware/utils';
@@ -16,6 +15,8 @@ const { TextArea } = Input;
 const config = require('../../../pages/admin/config');
 const JoditEditor = dynamic(() => import('jodit-react'), { ssr: false });
 const { Text, Title } = Typography;
+const { Dragger } = Upload;
+
 export default function modal({
   _visible,
   hideEditModal,
@@ -24,8 +25,11 @@ export default function modal({
   dataEdit,
 }) {
   let divRef = useRef(null);
-  const [api, contextHolder] = notification.useNotification();
-
+  const [api2, contextHolder2] = notification.useNotification();
+  const [previewVisible, setPreviewVisible] = useState(false)
+  const [previewImage, setPreviewImage] = useState(null)
+  const [imageLandingPage, setImageLandingPage] = useState(null)
+  const [active, setActive] = useState(0)
   const [fields, setFields] = useState([
     {
       name: ['intro_title'],
@@ -40,12 +44,17 @@ export default function modal({
 
   const fetchEditData = async () => {
     if (dataEdit) {
-
-
+      setPreviewImage('..\\..\\..\\uploads\\c-' +
+        user.organization_id +
+        '\\cover\\' +
+        dataEdit.header_image)
+      setPreviewVisible(true)
+      setImageLandingPage(dataEdit.header_image)
+      setActive(dataEdit.is_show ? 1 : 0)
       setFields([
         {
-          name: ['poll_questions_title'],
-          value: !dataEdit ? '' : dataEdit.poll_questions_title,
+          name: ['header_link'],
+          value: !dataEdit ? '' : dataEdit.header_link,
         },
       ]);
     }
@@ -53,26 +62,28 @@ export default function modal({
 
   const onSubmitHandler = async value => {
     const data = {
-      poll_questions_title: value.poll_questions_title,
+      header_image: imageLandingPage,
+      header_link: value.header_link,
+      is_show: active,
     };
     console.log(data);
     const registerData = await apiInstance().put(
-      '/pollmenu/' + (dataEdit ? dataEdit.poll_questions_id : 0),
+      '/covermenu/' + (dataEdit ? dataEdit.header_id : 0),
       data,
     );
-    if (registerData.data.status == 200) {
-      openNotificationSuccess();
-    } else {
-      openNotificationFail(registerData.data.message);
-    }
+    // if (registerData.data.status == 200) {
+    //   openNotificationSuccess();
+    // } else {
+    //   openNotificationFail(registerData.data.message);
+    // }
 
-    console.log('ON OK');
-    fetch();
-    hideEditModal();
+    // fetch();
+    form.resetFields();
+    hideEditModal(registerData.data);
   };
 
   const openNotificationSuccess = () => {
-    api.success({
+    api2.success({
       message: `บันทึกมูลสำเร็จ`,
       description: 'บันทึกมูลสำเร็จ',
       placement: 'topRight',
@@ -80,7 +91,7 @@ export default function modal({
   };
 
   const openNotificationFail = messgae => {
-    api.error({
+    api2.error({
       message: `พบปัญหาระหว่างการบันทึกข้อมูล`,
       description: messgae,
       placement: 'topRight',
@@ -88,27 +99,128 @@ export default function modal({
   };
 
   const onReset = () => {
+
+    setPreviewImage('..\\..\\..\\uploads\\c-' +
+      user.organization_id +
+      '\\cover\\' +
+      dataEdit.header_image)
+    setPreviewVisible(true)
+    setImageLandingPage(dataEdit.header_image)
+    setActive(dataEdit.is_show ? 1 : 0)
+
     setFields([
       {
-        name: ['poll_questions_title'],
-        value: !dataEdit ? '' : dataEdit.poll_questions_title,
+        name: ['header_link'],
+        value: !dataEdit ? '' : dataEdit.header_link,
       },
     ]);
+
+    form.resetFields();
+
   };
 
+  const imageUploadprops = {
+    name: 'file',
+    multiple: false,
+    listType: 'text',
+    maxCount: 1,
+    action: "/api/upload/cover",
+    preview: false,
+    // uid: user.type_user == 1 ? "admin" : user.organization_id,
+    // beforeUpload(file) {
+    // 	const isLt10M = file.size / 1024 / 1024 < 10
+    // 	if (!isLt10M) {
+    // 		notification.open({
+    // 			message: 'Upload error!',
+    // 			description: <Text className="text-black">Image must smaller than 10MB!</Text>,
+    // 		})
+    // 	}
+    // 	return isLt10M
+    // },
+    customRequest: (options) => {
+      const data = new FormData()
+      data.append('file', options.file)
+      data.append('id', user.type_user == 1 ? "admin" : user.organization_id)
+      const config = {
+        "headers": {
+          "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
+        }
+      }
+      axios.post(options.action, data, config).then((res) => {
+        // imageLandingPage
+        // console.log(res.data.data.list[0]._name)
+        setImageLandingPage(res.data.data.list[0]._name)
+        options.onSuccess(res.data, options.file)
+      }).catch((err) => {
+        console.log(err)
+      })
+
+    },
+    async onChange(info) {
+      const { status } = info.file
+      // console.log(user)
+      switch (info.file.status) {
+        // case "uploading":
+        //   nextState.selectedFileList = [info.file];
+        //   break;
+        case "done":
+          if (!info.file.url && !info.file.preview) {
+            info.file.preview = await getBase64(info.file.originFileObj);
+          }
+          setPreviewImage(info.file.url || info.file.preview)
+          setPreviewVisible(true)
+          break;
+
+        default:
+          // error or removed
+          resetImagePreview()
+      }
+      //console.log(info.file)
+
+      // this.setState({
+      //   previewImage: file.url || file.preview,
+      //   previewVisible: true,
+      // });
+
+    },
+    onRemove(info) {
+      console.log("onRemove")
+      console.log(info)
+      resetImagePreview()
+
+    }
+  }
+  const resetImagePreview = () => {
+    setPreviewImage('..\\..\\..\\uploads\\c-' +
+      user.organization_id +
+      '\\cover\\' +
+      dataEdit.header_image)
+    setPreviewVisible(true)
+    setImageLandingPage(dataEdit.header_image)
+  }
+
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
 
   return (
     <>
-      {contextHolder}
+      {contextHolder2}
       <Modal
-        title={'แก้ไขคำถาม'}
+        title="แก้ไขหัวเว็บไซต์"
         className="mt-4"
         centered
         visible={_visible}
         // onOk={() => onOK()}
         onCancel={() => {
-          hideEditModal();
           // form.resetFields();
+          resetImagePreview();
+          hideEditModal(false);
         }}
         width={1000}
         footer={null}
@@ -120,31 +232,75 @@ export default function modal({
           requiredMark={true}
           form={form}
           fields={fields}
+        ><Form.Item
+          name="##"
+          label="ภาพลิงค์หน่วยงานที่เกี่ยวข้อง :"
+          className="block text-gray-700 text-sm font-bold mb-2 w-full"
+        // rules={[
+        //   {
+        //     required: true,
+        //     message: 'กรุณากรอกเลือกภาพลิงค์หน่วยงานที่เกี่ยวข้อง',
+        //   },
+        // ]}
         >
+            {/* <Dragger {...dropimg}> */}
+            <Dragger
+              maxCount={1}
+              // listType="picture"
+              accept=".jpg, .jpeg, .png"
+              {...imageUploadprops}
+            >
+
+              {previewVisible && <><Image
+                // width={200}
+                preview={false}
+                src={previewImage}
+              />
+              </>
+              }
+              {!previewVisible && <>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined />
+                </p>
+                <p className="ant-upload-text">
+                  คลิก หรือ ลากไฟล์มาที่บริเวณนี้เพื่ออัปโหลด
+                </p>
+              </>
+              }
+            </Dragger>
+          </Form.Item>
           <Form.Item
-            name="poll_questions_title"
-            label="ชื่อเมนู"
-            className="block text-gray-700 text-sm font-bold mb-2 w-2/3"
+            name="header_link"
+            label="ลิงค์"
             style={{ float: 'left' }}
-            rules={[
-              {
-                required: true,
-                message: 'กรุณากรอกชื่อเมนู',
-              },
-            ]}
+            className="block text-gray-700 text-sm font-bold mb-2 w-full"
+          // rules={[
+          //   {
+          //     required: true,
+          //     message: 'กรุณากรอกลิงค์ URL',
+          //   },
+          // ]}
           >
             <Input
               id="#"
               type="text"
-              placeholder="ชื่อเมนู"
+              placeholder="ลิงค์"
               className="resize-none border rounded-md"
             />
           </Form.Item>
           <Form.Item
-            className="flex mt-6 mb-0 w1/3"
-            style={{ marginBottom: 0 }}
+            className=" text-gray-700 text-sm font-bold mb-2 w-full"
           >
-            <div className="lg:inline-flex w-full mt-6">
+            <div className="lg:inline-flex text-left w-1/2">
+              <Switch
+                className="swt-btn"
+                checked={active}
+                onClick={value => setActive(value ? 1 : 0)}
+              />
+              <p className="mx-2 text-sm">การแสดงผล</p>
+
+            </div>
+            <div className="lg:inline-flex w-1/2 mt-6">
               <div className="text-center lg:text-right w-full lg:w-full">
                 <Button
                   htmlType="button"

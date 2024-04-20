@@ -45,10 +45,10 @@ export default function Home(props) {
     },
     {
       title: 'ชื่อกิจกรรมถวายพระพร',
-      // dataIndex: 'intro_id',
+      dataIndex: 'intro_id',
       key: 'intro_id',
       sorter: true,
-      render: data => `${data.intros.intro_title}`,
+      // render: data => `${data.intros.intro_title}`,
       // width: '20%',
       // defaultSortOrder: 'descend',
     },
@@ -189,7 +189,7 @@ export default function Home(props) {
     });
   };
   return (
-    <Layout key={"home-blessing-list"} titlePage={"รายชื่อถวายพระพร"} title="Government - Admin management" url={origin} origin={origin} isMain={true}
+    <Layout key={"home-blessing-list"} titlePage={"จัดการรายชื่อถวายพระพร"} title="Government - Admin management" url={origin} origin={origin} isMain={true}
       indexSubMenu={"1"}
       indexMenu={"sub-1-8"}
       user={login} props={props} _routes={[
@@ -198,7 +198,7 @@ export default function Home(props) {
           breadcrumbName: 'หน้าหลัก',
         }, {
           path: '/admin/management/blessing-list',
-          breadcrumbName: 'รายชื่อถวายพระพร',
+          breadcrumbName: 'จัดการรายชื่อถวายพระพร',
         }]}>
       <div>
         {contextHolder}

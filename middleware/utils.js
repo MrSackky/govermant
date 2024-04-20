@@ -1,8 +1,8 @@
-import jwt from 'jsonwebtoken';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import Router, { useRouter } from 'next/router';
+import jwt from 'jsonwebtoken';
 import moment from 'moment';
+import Router from 'next/router';
 
 const SECRET_KEY = process.env.JWT_KEY;
 
@@ -65,9 +65,9 @@ export function addDays(date, days) {
 //YYYY-MM-DD
 export function formatDateWithoutTime(date) {
   var dateString =
-  date.getUTCFullYear() + "-" +
+    date.getUTCFullYear() + "-" +
     ("0" + (date.getUTCMonth() + 1)).slice(-2) + "-" +
-    ("0" + date.getUTCDate()).slice(-2) + " " 
+    ("0" + date.getUTCDate()).slice(-2) + " "
   return dateString;
 }
 // const api = process.env.PUBLIC_URL
@@ -143,7 +143,7 @@ export function convertDateDBtoDatePickerWithTime(date) {
     //:07.000Z
     //SampleText.replace("Developer", "App Builder");
     var dateSplit = date.toString().split("T");
-    return dateSplit[0]+" " + dateSplit[1].replace(".000Z", "");
+    return dateSplit[0] + " " + dateSplit[1].replace(".000Z", "");
   } catch (error) {
     return "";
   }
@@ -206,7 +206,7 @@ export async function getIPAddress() {
   // setIP(res.data.IPv4)
   // return
 }
-export  function bytesToSize(bytes) {
+export function bytesToSize(bytes) {
   var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
   if (bytes == 0) return '0 Byte';
   var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
@@ -222,13 +222,24 @@ export function bytesToMB(bytes) {
 export async function getDatediff(startDate) {
 
   const timeEnd = moment();
-  const newStartDate= new Date(startDate);
-  const newEndDate=new Date(timeEnd);
-  const one_day = 1000*60*60*24;
+  const newStartDate = new Date(startDate);
+  const newEndDate = new Date(timeEnd);
+  const one_day = 1000 * 60 * 60 * 24;
   let result
-  result = Math.ceil((newStartDate.getTime() - newEndDate.getTime())/(one_day))
+  result = Math.ceil((newStartDate.getTime() - newEndDate.getTime()) / (one_day))
   console.log('date Converter result', result)
 
 
-  return result-1;
+  return result - 1;
+}
+
+
+export function getCurrentDate(separator = '') {
+
+  let newDate = new Date()
+  let date = newDate.getDate();
+  let month = newDate.getMonth() + 1;
+  let year = newDate.getFullYear();
+
+  return `${year}${separator}${month < 10 ? `0${month}` : `${month}`}${separator}${date}`
 }

@@ -1,14 +1,14 @@
 
 import { Divider, Image, Typography } from 'antd';
 import React, { useState } from "react";
-import ActivitiesSlide from '../../../components/template/free-1/Activities';
+import ActivitiesSlide from '../../../components/template/free-1/ActivitiesSlider';
 import Banners from '../../../components/template/free-1/Banners';
 import Borad from '../../../components/template/free-1/Borad';
 import Covers from '../../../components/template/free-1/Cover';
 import Layout from '../../../components/template/free-1/Layout';
 import Menu from '../../../components/template/free-1/Menu';
-import News from '../../../components/template/free-1/News';
-import PurchaseNews from '../../../components/template/free-1/PurchaseNews';
+import News from '../../../components/template/free-1/NewsSection';
+import PurchaseNews from '../../../components/template/free-1/PurchaseNewsSection';
 import Viewer from '../../../components/template/free-1/Viewer';
 
 const { Title, Text } = Typography;
@@ -180,51 +180,64 @@ export default function Template() {
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
+      question_num: 10,
+      answer_num: 10
     },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
+      question_num: 10,
+      answer_num: 10
     },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
+      question_num: 10,
+      answer_num: 10
     },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
+      question_num: 10,
+      answer_num: 10
     },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
-    }
-    ,
+      question_num: 10,
+      answer_num: 10
+    },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
-    }
-    ,
+      question_num: 10,
+      answer_num: 10
+    },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
-    }
-    ,
+      question_num: 10,
+      answer_num: 10
+    },
     {
       question_title: "Finding customers for your new business Finding customers for your new business Finding customers for your new business Finding",
       category: "category",
       description: "description",
       image: '\\images\\templates\\free-1\\banner-1.png',
+      question_num: 10,
+      answer_num: 10
     }
 
   ]);
@@ -239,7 +252,7 @@ export default function Template() {
         >
 
           <div class="md:col-span-10 ">
-            <ActivitiesSlide news={activities} />
+            <ActivitiesSlide news={activities} isHome={true} />
             <News news={news} />
             <PurchaseNews news={purchaseNews} />
 

@@ -24,9 +24,11 @@ export default function Home(props) {
   const { user, origin } = props;
   const [url, setUrl] = useState('');
   const [journalData, setJournalData] = useState(null);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [imageLandingPage, setImageLandingPage] = useState(null);
-  const [previewVisible, setPreviewVisible] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null)
+  const [imageLandingPage, setImageLandingPage] = useState(null)
+  const [previewVisibleImage, setPreviewVisibleImage] = useState(false)
+  const [previewFile, setPreviewFile] = useState(null)
+  const [previewVisibleFile, setPreviewVisibleFile] = useState(false)
   const [journal_ori, setJournal_ori] = useState('')
   const [fields, setFields] = useState([
     {
@@ -143,9 +145,10 @@ export default function Home(props) {
       '\\journal\\' +
       _journalData.data.journal.journal_img,
     );
-    setPreviewVisible(true);
+    setPreviewVisibleImage(true);
+    setPreviewVisibleFile(true);
     setImageLandingPage(_journalData.data.journal.journal_img);
-    setActive(_journalData.data.journal.status_active);
+    setActive(_journalData.data.journal.is_show);
     setFields([
       {
         name: ['journal_subject'],
@@ -172,79 +175,6 @@ export default function Home(props) {
         value: _journalData.data.journal.is_show,
       },
     ]);
-  };
-
-  const imageUploadprops = {
-    name: 'file',
-    multiple: false,
-    listType: 'text',
-    maxCount: 1,
-    action: '/api/upload/journal',
-    preview: false,
-    // uid: user.type_user == 1 ? "admin" : user.organization_id,
-    // beforeUpload(file) {
-    // 	const isLt10M = file.size / 1024 / 1024 < 10
-    // 	if (!isLt10M) {
-    // 		notification.open({
-    // 			message: 'Upload error!',
-    // 			description: <Text className="text-black">Image must smaller than 10MB!</Text>,
-    // 		})
-    // 	}
-    // 	return isLt10M
-    // },
-    customRequest: options => {
-      const data = new FormData();
-      data.append('file', options.file);
-      data.append('id', user.type_user == 1 ? 'admin' : user.organization_id);
-      const config = {
-        headers: {
-          'content-type':
-            'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s',
-        },
-      };
-      axios
-        .post(options.action, data, config)
-        .then(res => {
-          // imageLandingPage
-          // console.log(res.data.data.list[0]._name)
-          setImageLandingPage(res.data.data.list[0]._name);
-          options.onSuccess(res.data, options.file);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    async onChange(info) {
-      const { status } = info.file;
-      // console.log(user)
-      switch (info.file.status) {
-        // case "uploading":
-        //   nextState.selectedFileList = [info.file];
-        //   break;
-        case 'done':
-          if (!info.file.url && !info.file.preview) {
-            info.file.preview = await getBase64(info.file.originFileObj);
-          }
-          setPreviewImage(info.file.url || info.file.preview);
-          setPreviewVisible(true);
-          break;
-
-        default:
-          // error or removed
-          resetImagePreview();
-      }
-      //console.log(info.file)
-
-      // this.setState({
-      //   previewImage: file.url || file.preview,
-      //   previewVisible: true,
-      // });
-    },
-    onRemove(info) {
-      console.log('onRemove');
-      console.log(info);
-      resetImagePreview();
-    },
   };
 
   const fileUploadprops = {
@@ -294,8 +224,79 @@ export default function Home(props) {
           if (!info.file.url && !info.file.preview) {
             info.file.preview = await getBase64(info.file.originFileObj);
           }
+          setPreviewFile(info.file.url || info.file.preview)
+          setPreviewVisibleFile(true)
+          break;
+
+        default:
+          // error or removed
+          resetImagePreview()
+      }
+      //console.log(info.file)
+
+      // this.setState({
+      //   previewImage: file.url || file.preview,
+      //   previewVisible: true,
+      // });
+
+    },
+    onRemove(info) {
+      console.log("onRemove")
+      console.log(info)
+      resetImagePreview()
+
+    }
+  }
+
+  const imageUploadprops = {
+    name: 'file',
+    multiple: false,
+    listType: 'text',
+    maxCount: 1,
+    action: "/api/upload/journal",
+    preview: false,
+    // uid: user.type_user == 1 ? "admin" : user.organization_id,
+    // beforeUpload(file) {
+    // 	const isLt10M = file.size / 1024 / 1024 < 10
+    // 	if (!isLt10M) {
+    // 		notification.open({
+    // 			message: 'Upload error!',
+    // 			description: <Text className="text-black">Image must smaller than 10MB!</Text>,
+    // 		})
+    // 	}
+    // 	return isLt10M
+    // },
+    customRequest: (options) => {
+      const data = new FormData()
+      data.append('file', options.file)
+      data.append('id', user.type_user == 1 ? "admin" : user.organization_id)
+      const config = {
+        "headers": {
+          "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
+        }
+      }
+      axios.post(options.action, data, config).then((res) => {
+        // setJournal_ori(res.data.data.list[0]._name)
+        setImageLandingPage(res.data.data.list[0]._name)
+        options.onSuccess(res.data, options.file)
+      }).catch((err) => {
+        console.log(err)
+      })
+
+    },
+    async onChange(info) {
+      const { status } = info.file
+      // console.log(user)
+      switch (info.file.status) {
+        // case "uploading":
+        //   nextState.selectedFileList = [info.file];
+        //   break;
+        case "done":
+          if (!info.file.url && !info.file.preview) {
+            info.file.preview = await getBase64(info.file.originFileObj);
+          }
           setPreviewImage(info.file.url || info.file.preview)
-          setPreviewVisible(true)
+          setPreviewVisibleImage(true)
           break;
 
         default:
@@ -319,8 +320,10 @@ export default function Home(props) {
   }
 
   const resetImagePreview = () => {
-    setPreviewVisible(false);
-    setPreviewImage(null);
+    setPreviewVisibleFile(false)
+    setPreviewVisibleImage(false)
+    setPreviewFile(null)
+    setPreviewImage(null)
   };
 
   function getBase64(file) {
@@ -412,7 +415,7 @@ export default function Home(props) {
                 {...fileUploadprops}
               >
 
-                {previewVisible && <> <p className="ant-upload-drag-icon">
+                {previewVisibleFile && <> <p className="ant-upload-drag-icon">
                   <FilePdfTwoTone />
                 </p>
                   <p className="ant-upload-text">
@@ -421,7 +424,7 @@ export default function Home(props) {
                   </p>
                 </>
                 }
-                {!previewVisible && <>
+                {!previewVisibleFile && <>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>
@@ -431,6 +434,13 @@ export default function Home(props) {
                 </>
                 }
               </Dragger>
+            </Form.Item>
+            <div style={{ clear: 'both' }}></div>
+            <Form.Item>
+              {journalData && <>
+                {journalData.journal_ori && <><div class="ant-upload-text-icon" style={{ float: 'left', marginRight: '2px' }}><span role="img" aria-label="paper-clip" class="anticon anticon-paper-clip"><svg viewBox="64 64 896 896" focusable="false" data-icon="paper-clip" width="1em" height="1em" fill="currentColor" aria-hidden="true"><path d="M779.3 196.6c-94.2-94.2-247.6-94.2-341.7 0l-261 260.8c-1.7 1.7-2.6 4-2.6 6.4s.9 4.7 2.6 6.4l36.9 36.9a9 9 0 0012.7 0l261-260.8c32.4-32.4 75.5-50.2 121.3-50.2s88.9 17.8 121.2 50.2c32.4 32.4 50.2 75.5 50.2 121.2 0 45.8-17.8 88.8-50.2 121.2l-266 265.9-43.1 43.1c-40.3 40.3-105.8 40.3-146.1 0-19.5-19.5-30.2-45.4-30.2-73s10.7-53.5 30.2-73l263.9-263.8c6.7-6.6 15.5-10.3 24.9-10.3h.1c9.4 0 18.1 3.7 24.7 10.3 6.7 6.7 10.3 15.5 10.3 24.9 0 9.3-3.7 18.1-10.3 24.7L372.4 653c-1.7 1.7-2.6 4-2.6 6.4s.9 4.7 2.6 6.4l36.9 36.9a9 9 0 0012.7 0l215.6-215.6c19.9-19.9 30.8-46.3 30.8-74.4s-11-54.6-30.8-74.4c-41.1-41.1-107.9-41-149 0L463 364 224.8 602.1A172.22 172.22 0 00174 724.8c0 46.3 18.1 89.8 50.8 122.5 33.9 33.8 78.3 50.7 122.7 50.7 44.4 0 88.8-16.9 122.6-50.7l309.2-309C824.8 492.7 850 432 850 367.5c.1-64.6-25.1-125.3-70.7-170.9z"></path></svg></span></div>
+                  <a href={'/uploads/c-' + user.organization_id + '/journal/' + journalData.journal_ori} target='_blank'>{journalData.journal_ori}</a></>}
+              </>}
             </Form.Item>
             <div style={{ clear: 'both' }}></div>
             <Form.Item
@@ -474,14 +484,14 @@ export default function Home(props) {
                 {...imageUploadprops}
               >
 
-                {previewVisible && <><Image
+                {previewVisibleImage && <><Image
                   // width={200}
                   preview={false}
                   src={previewImage}
                 />
                 </>
                 }
-                {!previewVisible && <>
+                {!previewVisibleImage && <>
                   <p className="ant-upload-drag-icon">
                     <InboxOutlined />
                   </p>

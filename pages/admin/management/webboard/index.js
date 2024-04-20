@@ -176,37 +176,25 @@ export default function Home(props) {
         }]}>
       <div>
         {contextHolder}
-        <Row >
-          <Col span={24} className=" pb-1">
-            <Row>
-              <Col span={18} className="">
-                <Row className="items-center">
+        <div className="w-full lg:inline-flex justify-between">
+          <div className="w-full lg:w-1/2 py-2 justify-center">
                   <Link href="/admin/management/webboard/add-webboard-q">
-                    <a
-                      //onClick={(e) => handleLogout(e)}
-                      className="lg:inline-flex lg:w-auto w-full px-2 py-2 rounded h-8 text-white bg-green-600 font-bold items-center justify-center hover:bg-green-600 hover:text-white"
-                    >
-                      เพิ่มหัวข้อกระดานข่าว
-                    </a>
-                  </Link>
-                </Row>
-              </Col>
-              <Col span={6} className="flex items-center justify-end justify-items-end">
-                <Row className=" justify-end justify-items-end ">
-                  <Search placeholder="input search text"
-                    onSearch={onSearch}
-                    enterButton
-                    allowClear
-                  />
-                </Row>
-              </Col>
-              {/* <Col span={12} className="flex justify-items-end">
-                    <div>
-
-                  </Col> */}
-            </Row>
-          </Col>
-        </Row>
+              <a
+                //onClick={(e) => handleLogout(e)}
+                className="lg:inline-flex lg:w-auto px-2 py-2 rounded h-8 text-white bg-green-600 font-bold items-center justify-center hover:bg-green-600 hover:text-white"
+              >
+                เพิ่มหัวข้อกระดานข่าว
+              </a>
+            </Link>
+          </div>
+          <div className="text-right w-full justify-items-end lg:w-auto py-2">
+            <Search placeholder="input search text"
+              onSearch={onSearch}
+              enterButton
+              allowClear
+            />
+          </div>
+        </div>
 
         <Table
           columns={columns}

@@ -1,17 +1,20 @@
-import { Form, Input, notification, Typography, Upload } from 'antd';
-import axios from 'axios';
-import moment from 'moment';
+import { DragOutlined } from '@ant-design/icons';
+import { Button, Image, Input, List, Modal, notification, Spin, Typography } from 'antd';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 // import UserNav from '../components/navigation/User';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactDragListView from 'react-drag-listview';
 /* components */
 import Layout from '../../../../components/layout/LayoutAdmin';
 import ModalAddMenu from '../../../../components/managemnet/cover-menu/add-menu';
+import ModalEditMenu from '../../../../components/managemnet/cover-menu/edit-menu';
 /* utils */
 import {
-  absoluteUrl, apiInstance
+  absoluteUrl,
+  apiInstance
 } from '../../../../middleware/utils';
+
 
 
 const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
@@ -21,192 +24,177 @@ const { TextArea } = Input;
 const config = require('./../../config');
 
 export default function Home(props) {
-  const editor = useRef(null)
-  const [content, setContent] = useState('')
   const [api, contextHolder] = notification.useNotification();
   const { user, origin } = props;
   const router = useRouter();
-  const [previewImage, setPreviewImage] = useState(null)
-  const [imageLandingPage, setImageLandingPage] = useState(null)
-  const [previewVisible, setPreviewVisible] = useState(false)
+  const [loading, setLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [visibleEditModal, setVisibleEditModal] = useState(false);
+  const [dataEdit, setDataEdit] = useState(null);
+  const [visibleModalDelete, setVisibleModalDelete] = useState(false)
+  const [dataDelete, setDataDelete] = useState(null)
 
-
-  const [slide, setSlide] = useState(1);
-  const slider = () => {
-    slide ? setSlide(0) : setSlide(1);
-  };
-
-  const [active, setActive] = useState(1);
-  const actived = () => {
-    active ? setActive(0) : setActive(1);
-  };
-
-  const [date, setDate] = useState('');
-  const [fields, setFields] = useState([
-    {
-      name: ['activities_date'],
-      value: moment(),
-    },
-  ]);
 
   useEffect(() => {
-    setDate(moment())
+    fetchCoverData();
   }, []);
 
-  async function onSubmitHandler(value) {
-    console.log("date onSubmitHandler")
-    // console.log(date)
-    var dateStr = moment(value.activities_date).format()
-    const data = {
-      organization_id: user.organization_id,
-      activities_title: value.activities_title,
-      activities_detail: value.activities_detail,
-      activities_image: imageLandingPage,
-      activities_date: dateStr,
-      activities_keyword: value.activities_keyword,
-      is_slide: slide,
-      status_active: active,
-    };
-    console.log(dateStr._i)
-    console.log(data)
-    const addactivitiesData = await apiInstance().post(
-      'admin/management/add-activities',
-      data,
+
+  const fetchCoverData = async () => {
+    setLoading(true)
+    const _pollQuestionData = await apiInstance().get('/covermenu?organization_id=' + (user ? user.organization_id : 0));
+    console.log(_pollQuestionData)
+    setQuestions(_pollQuestionData.data.results)
+    setLoading(false)
+
+  };
+
+  const onDelete = async value => {
+    // console.log('DELETE')
+
+    const registerData = await apiInstance().delete(
+      'covermenu/' + dataDelete.customer_headers,
+      {},
     );
-    if (addactivitiesData.data.status == 200) {
-      openNotificationRegisterSuccess();
-      setTimeout(function () { //Start the timer
-        router.push('/admin/management/activities')
-      }.bind(this), 2000)
+    if (registerData.data.status == 200) {
+      openNotificationSuccess();
+      // fetchOrganizationData();
+      setVisibleModalDelete(false);
+      fetchCoverData();
+      // fetchPollQuestionData();
     } else {
-      openNotificationRegisterFail(addactivitiesData.data.message);
+      openNotificationFail(registerData.data.message);
     }
-  }
+  };
+
+  const onclikEditModal = (value, obj) => {
+    // compareSync
+    console.log('onclikEditModal');
+    setDataEdit(obj);
+    setVisibleEditModal(value);
+  };
 
 
-  const openNotificationRegisterSuccess = () => {
+  const hideEditModal = (data) => {
+    // setVisibleModalDelete(false)
+    setVisibleEditModal(false);
+    if (data.status == 200) {
+      openNotificationSuccess();
+    } else {
+      openNotificationFail(data.message);
+    }
+    fetchCoverData();
+
+  };
+
+  const openNotificationSuccess = () => {
     api.success({
-      message: `เพิ่มกิจกรรมสำเร็จ`,
-      description: 'เพิ่มกิจกรรมสำเร็จแล้ว',
+      message: `บันทึกมูลสำเร็จ`,
+      description: 'บันทึกมูลสำเร็จ',
       placement: 'topRight',
     });
   };
 
-  const openNotificationRegisterFail = messgae => {
+  const openNotificationFail = messgae => {
     api.error({
-      message: `พบปัญหาระหว่างการเพิ่มกิจกรรม`,
+      message: `พบปัญหาระหว่างการบันทึกข้อมูล`,
       description: messgae,
       placement: 'topRight',
     });
   };
 
-  const { Dragger } = Upload;
-
-
-  function onChange(value, dateString) {
-    // console.log('Selected Time: ', value);
-    // console.log('Formatted Selected Time: ', dateString);
-    setDate(dateString);
-  }
-
-  const [form] = Form.useForm();
-
-  const onReset = () => {
-    setActive(1)
-    setSlide(1)
-    resetImagePreview()
-    form.resetFields();
-    setFields([
-      {
-        name: ['activities_date'],
-        value: moment(),
-      },
-    ])
+  const showModal = (data) => {
+    setDataDelete(data)
+    setVisibleModalDelete(true)
   };
 
-  const imageUploadprops = {
-    name: 'file',
-    multiple: false,
-    listType: 'text',
-    maxCount: 1,
-    action: "/api/upload/activities",
-    preview: false,
-    // uid: user.type_user == 1 ? "admin" : user.organization_id,
-    // beforeUpload(file) {
-    // 	const isLt10M = file.size / 1024 / 1024 < 10
-    // 	if (!isLt10M) {
-    // 		notification.open({
-    // 			message: 'Upload error!',
-    // 			description: <Text className="text-black">Image must smaller than 10MB!</Text>,
-    // 		})
-    // 	}
-    // 	return isLt10M
-    // },
-    customRequest: (options) => {
-      const data = new FormData()
-      data.append('file', options.file)
-      data.append('id', user.type_user == 1 ? "admin" : user.organization_id)
-      const config = {
-        "headers": {
-          "content-type": 'multipart/form-data; boundary=----WebKitFormBoundaryqTqJIxvkWFYqvP5s'
-        }
-      }
-      axios.post(options.action, data, config).then((res) => {
-        setImageLandingPage(res.data.data.list[0]._name)
-        options.onSuccess(res.data, options.file)
-      }).catch((err) => {
-        console.log(err)
-      })
 
-    },
-    async onChange(info) {
-      const { status } = info.file
-      // console.log(user)
-      switch (info.file.status) {
-        // case "uploading":
-        //   nextState.selectedFileList = [info.file];
-        //   break;
-        case "done":
-          if (!info.file.url && !info.file.preview) {
-            info.file.preview = await getBase64(info.file.originFileObj);
-          }
-          setPreviewImage(info.file.url || info.file.preview)
-          setPreviewVisible(true)
-          break;
+  const openNotificationDeleteSuccess = () => {
+    api.success({
+      message: `ลบข้อมูลสำเร็จ`,
+      description: 'ลบข้อมูลสำเร็จ',
+      placement: 'topRight',
+    });
+  };
 
-        default:
-          // error or removed
-          resetImagePreview()
-      }
-      //console.log(info.file)
+  const onDeleteHeader = async () => {
+    // console.log('DELETE')
+    // const data = {
+    //   'organization_name': value.organization_name,
+    // }
+    // console.log(data)
+    const registerData = await apiInstance().delete('covermenu/' + dataDelete.header_id, {});
+    if (registerData.data.status == 200) {
+      openNotificationDeleteSuccess()
+      // fetchOrganizationData();
+      setVisibleModalDelete(false)
+      fetchCoverData();
 
-      // this.setState({
-      //   previewImage: file.url || file.preview,
-      //   previewVisible: true,
-      // });
-
-    },
-    onRemove(info) {
-      console.log("onRemove")
-      console.log(info)
-      resetImagePreview()
+    } else {
+      openNotificationFail(registerData.data.message)
 
     }
   }
+  const hideModal = () => {
+    setVisibleModalDelete(false)
+  };
 
-  const resetImagePreview = () => {
-    setPreviewVisible(false)
-    setPreviewImage(null)
-  }
 
-  function getBase64(file) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  }
+  const onDragEnd = async (fromIndex, toIndex, type, index) => {
+    setLoading(true);
+    /* IGNORES DRAG IF OUTSIDE DESIGNATED AREA */
+    if (toIndex < 0) return;
+
+    /* REORDER PARENT OR SUBLIST, ELSE THROW ERROR */
+    if (type === 'LIST-ITEM') {
+      const _data = {
+        header_id: questions[fromIndex].header_id,
+        seq: toIndex,
+      };
+      const menuData = await apiInstance().put('covermenu/reorder-menu', _data);
+
+      const _dataRevert = {
+        header_id: questions[toIndex].header_id,
+        seq: fromIndex,
+      };
+      const menuDataRevert = await apiInstance().put(
+        'covermenu/reorder-menu',
+        _dataRevert,
+      );
+      // console.log(menuDataRevert)
+      return fetchCoverData();
+      // const categories = reorder(data, fromIndex, toIndex);
+      // return setData(categories);
+    } else if (type === 'SUBLIST-ITEM') {
+      // console.log(' onDragEnd LIST-ITEM');
+      // console.log(fromIndex);
+      // console.log(toIndex);
+      // console.log(type);
+      // console.log(index);
+      // console.log(menus[index].menu_subs[fromIndex]);
+      // console.log(menus[index].menu_subs[toIndex]);
+      // const _data = {
+      //   menu_sub_id: menus[index].menu_subs[fromIndex].menu_sub_id,
+      //   menu_seq: toIndex,
+      // };
+      // const menuData = await apiInstance().put('menu/reorder-menu-sub', _data);
+
+      // const _dataRevert = {
+      //   menu_sub_id: menus[index].menu_subs[toIndex].menu_sub_id,
+      //   menu_seq: fromIndex,
+      // };
+      // const menuDataRevert = await apiInstance().put(
+      //   'menu/reorder-menu-sub',
+      //   _dataRevert,
+      // );
+
+      // // const subList = reorder(data[index].subList, fromIndex, toIndex);
+      // // const categories = JSON.parse(JSON.stringify(data));
+      // // categories[index].subList = subList;
+      // // return setData(categories);
+      // return fetch();
+    } else return new Error('NOT A VALID LIST');
+  };
 
   return (
     <Layout
@@ -214,8 +202,8 @@ export default function Home(props) {
       url={origin}
       origin={origin}
       // user={login}
-      indexSubMenu={"1"}
       indexMenu={"sub-6-2"}
+      indexSubMenu={"6"}
       titlePage="ส่วนหัวเว็บไซต์"
       _routes={[
         {
@@ -234,8 +222,100 @@ export default function Home(props) {
         href="https://unpkg.com/react-quill@1.3.3/dist/quill.snow.css"
       ></link>
       <div>
-        <ModalAddMenu fetch={fetch} user={user} />
+        <ModalAddMenu fetch={fetchCoverData} user={user} />
+        <ModalEditMenu
+          _visible={visibleEditModal}
+          hideEditModal={hideEditModal}
+          fetch={fetchCoverData}
+          user={user}
+          dataEdit={dataEdit}
+        />
+        <Spin spinning={loading}>
+          <ReactDragListView
+            nodeSelector=".ant-list.draggable"
+            lineClassName="dragLine"
+            onDragEnd={(fromIndex, toIndex) =>
+              onDragEnd(fromIndex, toIndex, 'LIST-ITEM')
+            }
+          >
+            {/* {questions.length == 0 && <Empty />} */}
+            {questions.map((obj, index) => (
+              <List
+                header={
+                  <>
+                    <Typography.Text strong className="grabbable ">
+                      <DragOutlined className="icon" />
+
+                      {/* {obj.header_image} */}
+                      <Image
+                        // width={200}
+                        preview={false}
+                        src={'..\\..\\..\\uploads\\c-' +
+                          user.organization_id +
+                          '\\cover\\' +
+                          obj.header_image}
+
+                        style={{
+                          paddingRight: '5px'
+                        }}
+                      />
+                      {obj.header_link && <>
+                        <br /><span className="ml-8 ml-2 mb-4">[ <a href={obj.header_link} target='_blank'>{obj.header_link}</a> ]</span><br />
+                      </>
+                      }
+                      <br />
+                      <Button
+                        className="ml-8 ml-2"
+                        type="default"
+                        onClick={() => {
+                          onclikEditModal(true, obj);
+                        }}
+                      >
+                        แก้ไข
+                      </Button>
+
+                      <Button
+                        className="ml-2 mr-2"
+                        type="danger"
+                        onClick={() => showModal(obj)}
+                      >
+                        ลบ
+                      </Button>
+                    </Typography.Text>
+
+                  </>
+                }
+                key={index}
+                className="draggable"
+              >
+                <ReactDragListView
+                  nodeSelector=".ant-list-item.draggable-item"
+                  lineClassName="dragLine"
+                  onDragEnd={(fromIndex, toIndex) =>
+                    onDragEnd(fromIndex, toIndex, 'SUBLIST-ITEM', index)
+                  }
+                ></ReactDragListView>
+              </List>
+            ))}
+          </ReactDragListView>
+        </Spin>
       </div>
+      <Modal
+        title="คุณต้องการลบข้อมูลหรือไม่?"
+        visible={visibleModalDelete}
+        onOk={onDeleteHeader}
+        onCancel={hideModal}
+        okText="ลบ"
+        cancelText="ยกเลิก"
+        okButtonProps={{
+          'type': "primary",
+          'danger': true
+        }}
+      >
+        <p>คุณต้องการลบ "{dataDelete ? dataDelete.header_image : ""}" หรือไม่?  </p>
+
+      </Modal>
+
     </Layout>
   );
 }

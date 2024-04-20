@@ -1,27 +1,17 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-/* utils */
-import { absoluteUrl, checkIsLogin, apiInstance, convertDatetoAddDB, convertDateDBtoDatePickerNoTime } from '../../../../middleware/utils';
+import { InboxOutlined } from '@ant-design/icons';
+import {
+  Button, DatePicker, Form, Image, notification, Row, Switch, Typography, Upload
+} from 'antd';
 import axios from 'axios';
+import moment from 'moment';
+import { useRouter } from 'next/router';
+// import UserNav from '../components/navigation/User';
+import { useEffect, useState } from 'react';
+import validator from 'validator';
 /* components */
 import Layout from '../../../../components/layout/LayoutAdmin';
-import moment from 'moment';
-// import UserNav from '../components/navigation/User';
-import { useEffect, useState } from 'react'
-import validator from 'validator'
-import {
-  Row,
-  Typography,
-  Button,
-  notification,
-  Form,
-  DatePicker,
-  Upload,
-  Image,
-  Switch
-} from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
-import { set } from 'js-cookie';
+/* utils */
+import { absoluteUrl, apiInstance, convertDateDBtoDatePickerNoTime } from '../../../../middleware/utils';
 const { Text, Title } = Typography;
 const { Dragger } = Upload;
 
@@ -66,7 +56,7 @@ export default function Home(props) {
       "is_admin": 1,
     }
 
-    const registerData = await apiInstance().put('/admin/management/landing-page/'+introId, data);
+    const registerData = await apiInstance().put('/admin/management/landing-page/' + introId, data);
     if (registerData.data.status == 200) {
       openNotificationSuccess()
       fetch();
@@ -171,7 +161,7 @@ export default function Home(props) {
       }
       axios.post(options.action, data, config).then((res) => {
         // imageLandingPage
-        // console.log(res.data.data.list[0]._name) 
+        // console.log(res.data.data.list[0]._name)
         setImageLandingPage(res.data.data.list[0]._name)
         options.onSuccess(res.data, options.file)
       }).catch((err) => {
@@ -326,8 +316,8 @@ export default function Home(props) {
                 // },
                 {
                   async validator(rule, value) {
-                    
-                    if(imageLandingPage == null){
+
+                    if (imageLandingPage == null) {
                       return Promise.reject('กรุณาเลือก ภาพ landing page')
                     }
 
@@ -384,7 +374,7 @@ export default function Home(props) {
 
             >
               <input className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" size="large" placeholder="Email"
-              // onChange={() => setEmailText(event.target.value)} 
+              // onChange={() => setEmailText(event.target.value)}
               />
             </Form.Item>
 

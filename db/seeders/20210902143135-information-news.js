@@ -11,12 +11,12 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    //  return queryInterface.bulkInsert('information_news', [
-    //   {
-    //     infor_detail: 'ทดสอบ',
-    //     is_deleted: 0,
-    //   },
-    // ]);
+     return queryInterface.bulkInsert('information_news', [
+      {
+        infor_detail: 'ทดสอบ',
+        is_deleted: 0,
+      },
+    ]);
 
   },
 

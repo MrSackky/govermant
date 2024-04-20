@@ -11,15 +11,15 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    //  return queryInterface.bulkInsert('type_users', [
-    //   {
-    //     type_user_id: 1,
-    //     name_type_user: 'Super admin(หจก)'
-    //   }, {
-    //     type_user_id: 2,
-    //     name_type_user:  'User customer'
-    //   },
-    // ]);
+     return queryInterface.bulkInsert('type_users', [
+      {
+        type_user_id: 1,
+        name_type_user: 'Super admin(หจก)'
+      }, {
+        type_user_id: 2,
+        name_type_user:  'User customer'
+      },
+    ]);
   },
 
   down: async (queryInterface, Sequelize) => {

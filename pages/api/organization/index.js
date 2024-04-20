@@ -1,6 +1,6 @@
 import nextConnect from 'next-connect';
-const models = require('../../../db/models/index');
 import middleware from '../../../middleware/auth';
+const models = require('../../../db/models/index');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
@@ -15,7 +15,7 @@ const handler = nextConnect()
     } = req;
     const { results, page, search, sortField = "organization_id", sortOrder = "DESC", filters = [] } = req.query;
     let _search = {};
-    
+
 
     if (search != "") {
       if (filters == 'undefined' || filters == "null") {
@@ -97,13 +97,13 @@ const handler = nextConnect()
 
     // console.log(_search)
     const _organization = await models.Organization.findAndCountAll({
-      // attributes: ['package_id','code_package','name_package','size_limit'] 
+      // attributes: ['package_id','code_package','name_package','size_limit']
       attributes: [
         'organization_id', 'organization_name', 'organization_name_eng', 'organization_logo',
         'organization_email', 'organization_address', 'organization_sub_district_id', 'organization_phone',
         'organization_fax', 'theme', 'thumbnail', 'thumbnail_link', 'thumbnail_url', 'show_index',
         'google_verify', 'social_fb', 'social_fb_pageid', 'rss', 'google_tag_manager1', 'google_tag_manager2',
-        'date_created', 'date_expired', 'size_used', 'package', 'is_use'
+        'date_created', 'date_expired', 'size_used', 'package', 'is_use', 'is_use_intro'
       ],
       where: _search,
       offset: results * (page - 1),

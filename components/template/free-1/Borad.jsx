@@ -31,7 +31,7 @@ export default function Borad({ borads }) {
       <Divider orientation="left" style={{ marginBottom: "0px" }}><div class="uppercase tracking-wide text-2xl  font-semibold mb-2 ">กระดานข่าว</div></Divider>
       <Table columns={columns} dataSource={borads} pagination={false} style={{ marginBottom: "15px" }} />
 
-      <p class="text-right"><a href="#" class="ml-1 mt-1 text-sm leading-tight font-medium text-black hover:underline">กระดานข่าวทั้งหมด</a></p>
+      <p class="text-right"><a href="/template/free/borads" class="ml-1 mt-1 text-sm leading-tight font-medium text-black hover:underline">กระดานข่าวทั้งหมด</a></p>
 
     </div>
   )

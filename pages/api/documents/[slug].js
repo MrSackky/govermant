@@ -1,10 +1,10 @@
+import moment from 'moment';
 import nextConnect from 'next-connect';
-const models = require('../../../db/models/index');
 import middleware from '../../../middleware/auth';
-import { addDays , getIPAddress } from '../../../middleware/utils';
+import { getIPAddress } from '../../../middleware/utils';
+const models = require('../../../db/models/index');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-import moment from 'moment';
 
 const handler = nextConnect()
   // Middleware
@@ -34,6 +34,7 @@ const handler = nextConnect()
     const { slug } = req.query;
     const file_id = slug;
     const {
+      organization_id,
       file_name,
       file_name_ori,
       file_subject,
@@ -45,6 +46,7 @@ const handler = nextConnect()
 
     //SampleText.replace("Developer", "App Builder");
     const dataDocuments = {
+      "organization_id": organization_id,
       "file_name": file_name,
       "file_name_ori": file_name_ori,
       "file_subject": file_subject,
@@ -55,6 +57,7 @@ const handler = nextConnect()
     };
 
     if (
+      organization_id == undefined ||
       file_name == undefined ||
       file_name_ori == undefined ||
       file_subject == undefined ||

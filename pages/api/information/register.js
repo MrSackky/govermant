@@ -1,7 +1,6 @@
 import nextConnect from 'next-connect';
-const models = require('../../../db/models/index');
 import middleware from '../../../middleware/auth';
-import { addDays } from '../../../middleware/utils';
+const models = require('../../../db/models/index');
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
 
@@ -55,7 +54,7 @@ const handler = nextConnect()
     ) {
       return res.status(200).json({
         status: 201,
-        message: 'data incorrect',
+        message: 'data incorrectdddddd',
         dataUser: dataUser,
       });
     }

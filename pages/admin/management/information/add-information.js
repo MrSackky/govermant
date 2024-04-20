@@ -20,35 +20,18 @@ const JoditEditor = dynamic(() => import("jodit-react"), { ssr: false });
 const { Text, Title } = Typography;
 
 const { TextArea } = Input;
-const config = require('./../../config');
+const config = require('../../config');
 
 export default function Home(props) {
-  const [api, contextHolder] = notification.useNotification();
-  const { user, origin } = props;
-  const [login, setLogin] = useState(null);
-  const [shouldRun, setShouldRun] = useState(true);
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [pagination, setPagination] = useState({
-    current: 1,
-    pageSize: 15,
-  });
   const editor = useRef(null)
   const [content, setContent] = useState('')
+  const [api, contextHolder] = notification.useNotification();
+  const { user, origin } = props;
+  const router = useRouter();
   const [previewImage, setPreviewImage] = useState(null)
   const [imageLandingPage, setImageLandingPage] = useState(null)
   const [previewVisible, setPreviewVisible] = useState(false)
-  const router = useRouter();
-  const [fields, setFields] = useState([
-    {
-      name: ['activities_date'],
-      value: moment(),
-    },
-  ]);
 
-  useEffect(() => {
-
-  }, []);
 
   const [active, setActive] = useState(1);
   const actived = () => {
@@ -56,22 +39,33 @@ export default function Home(props) {
   };
 
   const [date, setDate] = useState('');
+  const [fields, setFields] = useState([
+    {
+      name: ['infor_date'],
+      value: moment(),
+    },
+  ]);
+
+  useEffect(() => {
+    setDate(moment())
+  }, []);
 
   async function onSubmitHandler(value) {
-
-    var date_Str = moment(date).format()
+    console.log("date onSubmitHandler")
+    // console.log(date)
+    var dateStr = moment(value.infor_date).format()
     const data = {
       organization_id: user.organization_id,
       infor_title: value.infor_title,
       infor_detail: value.infor_detail,
-      // activities_image: value.activities_image,
       infor_image: imageLandingPage,
-      infor_date: date_Str,
-      // activities_date: '2001-01-31 17:00:00',
+      infor_date: dateStr,
       infor_keyword: value.infor_keyword,
       infor_view: '0',
       status_active: active,
     };
+    console.log(dateStr._i)
+    console.log(data)
     const addinforData = await apiInstance().post(
       'admin/management/add-information',
       data,
@@ -86,10 +80,11 @@ export default function Home(props) {
     }
   }
 
+
   const openNotificationRegisterSuccess = () => {
     api.success({
       message: `เพิ่มข่าวประชาสัมพันธ์สำเร็จ`,
-      description: 'เพิ่มข่าวประชาสัมพันธ์แล้ว',
+      description: 'เพิ่มข่าวประชาสัมพันธ์สำเร็จแล้ว',
       placement: 'topRight',
     });
   };
@@ -102,8 +97,8 @@ export default function Home(props) {
     });
   };
 
-
   const { Dragger } = Upload;
+
 
   function onChange(value, dateString) {
     // console.log('Selected Time: ', value);
@@ -119,7 +114,7 @@ export default function Home(props) {
     form.resetFields();
     setFields([
       {
-        name: ['activities_date'],
+        name: ['infor_date'],
         value: moment(),
       },
     ])
@@ -153,8 +148,6 @@ export default function Home(props) {
         }
       }
       axios.post(options.action, data, config).then((res) => {
-        // imageLandingPage
-        // console.log(res.data.data.list[0]._name)
         setImageLandingPage(res.data.data.list[0]._name)
         options.onSuccess(res.data, options.file)
       }).catch((err) => {
@@ -211,14 +204,12 @@ export default function Home(props) {
     });
   }
 
-  console.log(active);
-
   return (
     <Layout
       title="Government - Admin management"
       url={origin}
       origin={origin}
-      user={login}
+      // user={login}
       indexSubMenu={"1"}
       indexMenu={"sub-1-1"}
       titlePage="เพิ่มข่าวประชาสัมพันธ์"
@@ -229,7 +220,7 @@ export default function Home(props) {
         },
         {
           path: '/admin/management/information',
-          breadcrumbName: 'ข่าวประชาสัมพันธ์',
+          breadcrumbName: 'จัดการข่าวประชาสัมพันธ์',
         },
         {
           path: '/admin/management/information/add-information',
@@ -242,6 +233,7 @@ export default function Home(props) {
         rel="stylesheet"
         href="https://unpkg.com/react-quill@1.3.3/dist/quill.snow.css"
       ></link>
+
       <div className="w-5/6 lg:w-full mx-auto">
         <Form
           name="basic"
@@ -329,7 +321,7 @@ export default function Home(props) {
             </Dragger>
           </Form.Item>
           <Form.Item
-            name="activities_date"
+            name="infor_date"
             label="วันที่ลงข่าวประชาสัมพันธ์ :"
             className="block text-gray-700 text-sm font-bold mb-2 w-full "
             rules={[
@@ -339,7 +331,6 @@ export default function Home(props) {
               },
             ]}
           >
-
             <DatePicker
               className="w-full"
               showTime
@@ -348,6 +339,7 @@ export default function Home(props) {
                 width: '100%',
               }}
               defaultValue={moment()}
+              value={date}
             />
           </Form.Item>
           <Form.Item
@@ -366,7 +358,7 @@ export default function Home(props) {
           <Form.Item className="flex mt-6">
             <div className="lg:inline-flex w-full">
               <div className="inline-flex text-left lg:w-1/2">
-                <Switch checked={active} onClick={actived} />
+                <Switch checked={active} onClick={(value) => { actived(value) }} />
                 <p className="mx-2 text-sm">การแสดงผล</p>
               </div>
               <div className="text-center lg:text-right w-full lg:w-1/2">

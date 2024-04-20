@@ -95,7 +95,7 @@ const handler = nextConnect()
           return res.status(200).json({
             status: 200,
             'success': true,
-            
+
             data: {
               'message': ["Upload completed."],
               "list": _files,

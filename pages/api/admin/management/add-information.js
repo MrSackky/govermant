@@ -1,10 +1,10 @@
+import moment from 'moment';
 import nextConnect from 'next-connect';
-const models = require('../../../../db/models/index');
 import middleware from '../../../../middleware/auth';
-import { addDays, getIPAddress } from '../../../../middleware/utils';
+import { getIPAddress } from '../../../../middleware/utils';
+const models = require('../../../../db/models/index');
 const bcrypt = require('bcryptjs');
 const salt = bcrypt.genSaltSync(10);
-import moment from 'moment';
 
 const handler = nextConnect()
   // Middleware
@@ -29,12 +29,12 @@ const handler = nextConnect()
       "infor_title": infor_title,
       "infor_detail": infor_detail,
       "infor_image": infor_image,
-      "infor_keyword": infor_keyword,
+      "infor_keyword": infor_keyword ? infor_keyword : "",
       "infor_view": infor_view,
       "status_active": status_active
     };
     console.log(dataUser)
-    if (organization_id == undefined || infor_date == undefined || infor_title == undefined || infor_detail == undefined || infor_image == undefined || infor_keyword == undefined || infor_view == undefined || status_active == undefined) {
+    if (organization_id == undefined || infor_date == undefined || infor_title == undefined || infor_detail == undefined || infor_image == undefined || infor_view == undefined || status_active == undefined) {
       return res.status(200).json({
         status: 201,
         message: 'data incorrect',

@@ -1,14 +1,13 @@
-import Link from 'next/link';
-import { Layout, Menu, Breadcrumb, Image, Row, Col } from 'antd';
+import { Col, Row } from 'antd';
 import Cookies from 'js-cookie';
-import Router, { useRouter } from 'next/router';
+import Link from 'next/link';
+import Router from 'next/router';
 import { useState } from 'react';
 const _Header = ({ props }) => {
   const [active, setActive] = useState(false);
 
   const handleLogout = (e) => {
     e.preventDefault()
-    console.log("handleLogout")
     Cookies.remove('token')
     Router.push('/login');
   };
@@ -86,7 +85,7 @@ const _Header = ({ props }) => {
 
 
                 <Link
-                 href="#"
+                  href="#"
                 >
                   <a
                     onClick={(e) => handleLogout(e)}

@@ -16,7 +16,11 @@ const handler = nextConnect()
         'organization_email', 'organization_address', 'organization_sub_district_id', 'organization_phone',
         'organization_fax', 'theme', 'thumbnail', 'thumbnail_link', 'thumbnail_url', 'show_index',
         'google_verify', 'social_fb', 'social_fb_pageid', 'rss', 'google_tag_manager1', 'google_tag_manager2',
-        'date_created', 'date_expired', 'size_used', 'is_use'
+        'date_created', 'date_expired', 'size_used', 'is_use', 'organization_email_alert', 'package',
+        'person01_name', 'person01_position', 'person01_image', 'person01_phone',
+        'person02_name', 'person02_position', 'person02_image', 'person02_phone',
+        'person03_name', 'person03_position', 'person03_image', 'person03_phone',
+        'is_use_intro', 'is_poll_confirm'
       ],
       where: {
         organization_id: organization_id,
@@ -109,7 +113,7 @@ const handler = nextConnect()
       thumbnail_url: thumbnail_url,
       organization_email: organization_email,
       date_expired: date_expired,
-      package_id: package_id,
+      package: package_id,
       organization_sub_district_id: organization_sub_district_id,
       organization_fax: organization_fax,
       thumbnail_link: thumbnail_link,
